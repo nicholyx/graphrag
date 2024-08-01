@@ -20,7 +20,6 @@ from graphrag.query.input.loaders.dfs import (
 )
 from graphrag.vector_stores import VectorStoreFactory, VectorStoreType
 from graphrag.vector_stores.lancedb import LanceDBVectorStore
-
 from .factories import get_global_search_engine, get_local_search_engine
 from .indexer_adapters import (
     read_indexer_covariates,
@@ -34,9 +33,9 @@ reporter = PrintProgressReporter("")
 
 
 def __get_embedding_description_store(
-    entities: list[Entity],
-    vector_store_type: str = VectorStoreType.LanceDB,
-    config_args: dict | None = None,
+        entities: list[Entity],
+        vector_store_type: str = VectorStoreType.LanceDB,
+        config_args: dict | None = None,
 ):
     """Get the embedding description store."""
     if not config_args:
@@ -71,22 +70,33 @@ def __get_embedding_description_store(
         )
 
         # load data from an existing table
-        description_embedding_store.document_collection = (
-            description_embedding_store.db_connection.open_table(
+        try:
+            table = description_embedding_store.db_connection.open_table(
                 description_embedding_store.collection_name
             )
+        except Exception as e:
+            # reporter.error(f"Failed to load description embeddings from lancedb, {e}")
+            store_entity_semantic_embeddings(
+                entities=entities, vectorstore=description_embedding_store
+            )
+            table = description_embedding_store.db_connection.open_table(
+                description_embedding_store.collection_name
+            )
+
+        description_embedding_store.document_collection = (
+            table
         )
 
     return description_embedding_store
 
 
 def run_global_search(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    query: str,
+        config_dir: str | None,
+        data_dir: str | None,
+        root_dir: str | None,
+        community_level: int,
+        response_type: str,
+        query: str,
 ):
     """Run a global search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
@@ -122,12 +132,12 @@ def run_global_search(
 
 
 def run_local_search(
-    config_dir: str | None,
-    data_dir: str | None,
-    root_dir: str | None,
-    community_level: int,
-    response_type: str,
-    query: str,
+        config_dir: str | None,
+        data_dir: str | None,
+        root_dir: str | None,
+        community_level: int,
+        response_type: str,
+        query: str,
 ):
     """Run a local search with the given query."""
     data_dir, root_dir, config = _configure_paths_and_settings(
@@ -189,9 +199,9 @@ def run_local_search(
 
 
 def _configure_paths_and_settings(
-    data_dir: str | None,
-    root_dir: str | None,
-    config_dir: str | None,
+        data_dir: str | None,
+        root_dir: str | None,
+        config_dir: str | None,
 ) -> tuple[str, str | None, GraphRagConfig]:
     if data_dir is None and root_dir is None:
         msg = "Either data_dir or root_dir must be provided."
@@ -215,8 +225,8 @@ def _infer_data_dir(root: str) -> str:
 
 
 def _create_graphrag_config(
-    root: str | None,
-    config_dir: str | None,
+        root: str | None,
+        config_dir: str | None,
 ) -> GraphRagConfig:
     """Create a GraphRag configuration."""
     return _read_config_parameters(root or "./", config_dir)
@@ -235,7 +245,7 @@ def _read_config_parameters(root: str, config: str | None):
     if settings_yaml.exists():
         reporter.info(f"Reading settings from {settings_yaml}")
         with settings_yaml.open(
-            "rb",
+                "rb",
         ) as file:
             import yaml
 
