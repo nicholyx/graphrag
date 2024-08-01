@@ -326,7 +326,7 @@ class GlobalSearch(BaseSearch):
 
             search_response = await self.llm.agenerate(
                 search_messages,
-                streaming=True,
+                streaming=False,
                 callbacks=self.callbacks,  # type: ignore
                 **llm_kwargs,  # type: ignore
             )
