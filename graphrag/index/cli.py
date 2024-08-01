@@ -65,7 +65,7 @@ def redact(input: dict) -> str:
         return result
 
     redacted_dict = redact_dict(input)
-    return json.dumps(redacted_dict, indent=4)
+    return json.dumps(redacted_dict, ensure_ascii=False, indent=4)
 
 
 def index_cli(
