@@ -116,7 +116,7 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
         input = input[: len(input) - len("```")]
 
     try:
-        result = json.loads(input)
+        result = json.loads(_clean_up_json(input))
     except json.JSONDecodeError:
         """Fixup potentially malformed json string using json_repair."""
         input = str(repair_json(json_str=input, return_objects=False))
@@ -135,6 +135,27 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     else:
         return input, result
 
+def _clean_up_json(json_str: str)->str:
+    """Clean up json string. @see graphrag.index.utils.json.clean_up_json """
+    json_str = (
+        json_str.replace("\\n", "")
+        .replace("\n", "")
+        .replace("\r", "")
+        .replace('"[{', "[{")
+        .replace('}]"', "}]")
+        .replace("\\", "")
+        .strip()
+    )
+
+    # Remove JSON Markdown Frame
+    if json_str.startswith("```json"):
+        json_str = json_str[len("```json") :]
+    if json_str.startswith("json"):
+        json_str = json_str[len("json") :]
+    if json_str.endswith("```"):
+        json_str = json_str[: len(json_str) - len("```")]
+
+    return json_str
 
 def get_sleep_time_from_error(e: Any) -> float:
     """Extract the sleep time value from a RateLimitError. This is usually only available in Azure."""
