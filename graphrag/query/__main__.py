@@ -21,8 +21,7 @@ class SearchType(Enum):
         """Return the string representation of the enum value."""
         return self.value
 
-
-if __name__ == "__main__":
+def run_query():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -99,3 +98,7 @@ if __name__ == "__main__":
             )
         case _:
             raise ValueError(INVALID_METHOD_ERROR)
+
+
+if __name__ == "__main__":
+    run_query()
