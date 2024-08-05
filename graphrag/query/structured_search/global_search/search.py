@@ -232,7 +232,11 @@ class GlobalSearch(BaseSearch):
         if _j == {}:
             return [{"answer": "not avaliable", "score": 0}]
 
-        parsed_elements = json.loads(search_response)["points"]
+        try:
+            parsed_elements = json.loads(search_response)["points"]
+        except Exception as e:
+            log.exception("Error parsing search response json, json=%s", search_response)
+            raise e
         return [
             {
                 "answer": element["description"],

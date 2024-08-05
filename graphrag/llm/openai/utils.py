@@ -90,11 +90,37 @@ def get_completion_llm_args(
 
 
 def try_parse_json_object(input: str) -> tuple[str, dict]:
+
+    input = _clean_up_json(input)
+
+    try:
+        result = json.loads(input)
+    except json.JSONDecodeError:
+        """Fixup potentially malformed json string using json_repair."""
+        input = str(repair_json(json_str=input, return_objects=False))
+
+        """Generate JSON-string output using best-attempt prompting & parsing techniques."""
+        try:
+            result = json.loads(input)
+        except json.JSONDecodeError:
+            log.exception("error loading json, json=%s", input)
+            return input, {}
+        else:
+            if not isinstance(result, dict):
+                log.exception("not expected dict type. type=%s:", type(result))
+                return input, {}
+            return input, result
+    else:
+        return input, result
+
+def _clean_up_json(input: str)->str:
+    """Clean up json string. @see graphrag.index.utils.json.clean_up_json """
     """JSON cleaning and formatting utilities."""
     """sometime, the llm return a json string with some extra description, this function will clean it up."""
-    _pattern = r"\{(.*)\}"
-    _match = re.search(_pattern, input)
-    input = "{" + _match.group(1) + "}" if _match else input
+    # 目前下面的判断有问题，此处注释掉
+    # _pattern = r"\{(.*)\}"
+    # _match = re.search(_pattern, input)
+    # input = "{" + _match.group(1) + "}" if _match else input
 
     """Clean up json string."""
     input = (
@@ -115,47 +141,7 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     if input.endswith("```"):
         input = input[: len(input) - len("```")]
 
-    try:
-        result = json.loads(_clean_up_json(input))
-    except json.JSONDecodeError:
-        """Fixup potentially malformed json string using json_repair."""
-        input = str(repair_json(json_str=input, return_objects=False))
-
-        """Generate JSON-string output using best-attempt prompting & parsing techniques."""
-        try:
-            result = json.loads(input)
-        except json.JSONDecodeError:
-            log.exception("error loading json, json=%s", input)
-            return input, {}
-        else:
-            if not isinstance(result, dict):
-                log.exception("not expected dict type. type=%s:", type(result))
-                return input, {}
-            return input, result
-    else:
-        return input, result
-
-def _clean_up_json(json_str: str)->str:
-    """Clean up json string. @see graphrag.index.utils.json.clean_up_json """
-    json_str = (
-        json_str.replace("\\n", "")
-        .replace("\n", "")
-        .replace("\r", "")
-        .replace('"[{', "[{")
-        .replace('}]"', "}]")
-        .replace("\\", "")
-        .strip()
-    )
-
-    # Remove JSON Markdown Frame
-    if json_str.startswith("```json"):
-        json_str = json_str[len("```json") :]
-    if json_str.startswith("json"):
-        json_str = json_str[len("json") :]
-    if json_str.endswith("```"):
-        json_str = json_str[: len(json_str) - len("```")]
-
-    return json_str
+    return input
 
 def get_sleep_time_from_error(e: Any) -> float:
     """Extract the sleep time value from a RateLimitError. This is usually only available in Azure."""
