@@ -65,9 +65,7 @@ def __get_embedding_description_store(
         description_embedding_store = LanceDBVectorStore(
             collection_name=collection_name
         )
-        description_embedding_store.connect(
-            db_uri=config_args.get("db_uri", "./lancedb")
-        )
+        description_embedding_store.connect(**config_args)
 
         # load data from an existing table
         try:
@@ -144,6 +142,7 @@ def run_local_search(
         data_dir, root_dir, config_dir
     )
     data_path = Path(data_dir)
+    lancedb_store_path = data_path.parent
 
     final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
     final_community_reports = pd.read_parquet(
@@ -163,6 +162,11 @@ def run_local_search(
 
     vector_store_args = (
         config.embeddings.vector_store if config.embeddings.vector_store else {}
+    )
+    vector_store_args.update(
+        {
+            "db_uri": f"{lancedb_store_path}/lancedb",
+        }
     )
 
     reporter.info(f"Vector Store Args: {vector_store_args}")
