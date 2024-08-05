@@ -277,7 +277,7 @@ async def run_pipeline(
             )
 
         log.debug(
-            "first row of %s => %s", workflow_name, workflow.output().iloc[0].to_json()
+            "first row of %s => %s", workflow_name, workflow.output().iloc[0].to_json(force_ascii=False)
         )
 
     async def emit_workflow_output(workflow: Workflow) -> pd.DataFrame:
