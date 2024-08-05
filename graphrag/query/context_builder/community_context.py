@@ -141,28 +141,34 @@ def build_community_context(
     # initialize the first batch
     _init_batch()
 
+    # 判断最后一次批次是否添加过
+    last_batch_added = True
+
     for report in selected_reports:
         new_context_text, new_context = _report_context_text(report, attributes)
         new_tokens = num_tokens(new_context_text, token_encoder)
 
         if batch_tokens + new_tokens > max_tokens:
             # add the current batch to the context data and start a new batch if we are in multi-batch mode
+            last_batch_added = True
             _cut_batch()
             if single_batch:
                 break
             _init_batch()
 
         # add current report to the current batch
+        last_batch_added = False
         batch_text += new_context_text
         batch_tokens += new_tokens
         batch_records.append(new_context)
 
     # add the last batch if it has not been added
-    if batch_text not in all_context_text:
+    if not last_batch_added:
+        last_batch_added = True
         _cut_batch()
 
     return all_context_text, {
-        context_name.lower(): pd.concat(all_context_records, ignore_index=True)
+        context_name.lower(): pd.concat(all_context_records, ignore_index=True) if len(all_context_records) > 0 else None
     }
 
 
