@@ -1,0 +1,107 @@
+
+-Goal-
+Given a text document that is potentially relevant to this activity, first identify all entities needed from the text in order to capture the information and ideas in the text.
+Next, report all relationships among the identified entities.
+
+-Steps-
+1. Identify all entities. For each identified entity, extract the following information:
+- entity_name: Name of the entity, capitalized
+- entity_type: Suggest several labels or categories for the entity. The categories should not be specific, but should be as general as possible.
+- entity_description: Comprehensive description of the entity's attributes and activities
+Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
+
+2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
+For each pair of related entities, extract the following information:
+- source_entity: name of the source entity, as identified in step 1
+- target_entity: name of the target entity, as identified in step 1
+- relationship_description: explanation as to why you think the source entity and the target entity are related to each other
+- relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
+Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+
+3. Return output in 
+Chinese as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
+
+4. If you have to translate into 
+Chinese, just translate the descriptions, nothing else!
+
+5. When finished, output {completion_delimiter}.
+
+-Examples-
+######################
+
+Example 1:
+
+text:
+赶到，张让自知难逃一死，便投河自杀了。
+　　众人从路边草堆中找到少帝和陈留王，护送回家。行不到几里路，一队大军赶到，为首一员大将正是董卓。董卓将少帝和陈留王送回宫中，便把人马驻扎在城外，天天带着铁甲骑兵入城，横行街市，闹得老百姓惶惶不安。
+　　董卓还带着宝剑出入皇宫。一天，董卓
+------------------------
+output:
+
+("entity"{tuple_delimiter}张让{tuple_delimiter}PERSON{tuple_delimiter}张让是末路之人，最终选择投河自尽)
+{record_delimiter}
+("entity"{tuple_delimiter}少帝{tuple_delimiter}PERSON{tuple_delimiter}少帝是皇帝的称号，指年轻的皇帝)
+{record_delimiter}
+("entity"{tuple_delimiter}陈留王{tuple_delimiter}PERSON{tuple_delimiter}陈留王是陈留地区的王，此处指该地区的王公)
+{record_delimiter}
+("entity"{tuple_delimiter}董卓{tuple_delimiter}PERSON{tuple_delimiter}董卓是末年权臣，以专横暴虐著称)
+{record_delimiter}
+("entity"{tuple_delimiter}铁甲骑兵{tuple_delimiter}ORGANIZATION{tuple_delimiter}铁甲骑兵是董卓的军队，以铁甲装备著称)
+{record_delimiter}
+("relationship"{tuple_delimiter}张让{tuple_delimiter}少帝{tuple_delimiter}张让自杀后，众人从路边草堆中找到少帝{tuple_delimiter}3)
+{record_delimiter}
+("relationship"{tuple_delimiter}张让{tuple_delimiter}陈留王{tuple_delimiter}张让自杀后，众人从路边草堆中找到陈留王{tuple_delimiter}3)
+{record_delimiter}
+("relationship"{tuple_delimiter}董卓{tuple_delimiter}铁甲骑兵{tuple_delimiter}董卓带领的铁甲骑兵在城外驻扎{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}董卓{tuple_delimiter}少帝{tuple_delimiter}董卓将少帝和陈留王送回宫中{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}董卓{tuple_delimiter}陈留王{tuple_delimiter}董卓将少帝和陈留王送回宫中{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}董卓{tuple_delimiter}城外{tuple_delimiter}董卓命令军队驻扎在城外{tuple_delimiter}6)
+{record_delimiter}
+("relationship"{tuple_delimiter}董卓{tuple_delimiter}皇宫{tuple_delimiter}董卓携带宝剑出入皇宫{tuple_delimiter}4)
+{completion_delimiter}
+#############################
+
+
+Example 2:
+
+text:
+太后亲自主持朝政，传旨封皇子刘协为陈留王，封自己的哥哥董重为骠骑将军，并让张让帮她处理朝政。
+　　皇帝刘辩的母亲何太后见董太后把持大权，心里也不痛快，她想了一个计策，在宫中摆了一桌酒，请董太后来喝酒，劝董太后不要管国家大事。董太后气得脸上红一阵白一阵，两人大吵一场。
+　　何
+------------------------
+output:
+
+("entity"{tuple_delimiter}太后{tuple_delimiter}PERSON{tuple_delimiter}太后，亲自主持朝政，具有决策权)
+{record_delimiter}
+("entity"{tuple_delimiter}刘协{tuple_delimiter}PERSON{tuple_delimiter}刘协，被封为陈留王，是太后的侄子)
+{record_delimiter}
+("entity"{tuple_delimiter}董重{tuple_delimiter}PERSON{tuple_delimiter}董重，被封为骠骑将军，是太后的哥哥)
+{record_delimiter}
+("entity"{tuple_delimiter}张让{tuple_delimiter}PERSON{tuple_delimiter}张让，负责协助太后处理朝政)
+{record_delimiter}
+("entity"{tuple_delimiter}何太后{tuple_delimiter}PERSON{tuple_delimiter}何太后，皇帝刘辩的母亲，不满董太后把持朝政)
+{record_delimiter}
+("entity"{tuple_delimiter}朝政{tuple_delimiter}ORGANIZATION{tuple_delimiter}朝政，是太后和何太后共同参与管理的国家政务)
+{record_delimiter}
+("relationship"{tuple_delimiter}太后{tuple_delimiter}刘协{tuple_delimiter}太后封刘协为陈留王{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}太后{tuple_delimiter}董重{tuple_delimiter}太后封董重为骠骑将军{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}太后{tuple_delimiter}张让{tuple_delimiter}太后让张让处理朝政{tuple_delimiter}6)
+{record_delimiter}
+("relationship"{tuple_delimiter}何太后{tuple_delimiter}朝政{tuple_delimiter}何太后不满董太后把持朝政，参与管理{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}何太后{tuple_delimiter}董重{tuple_delimiter}何太后不满董重参与把持朝政{tuple_delimiter}5)
+{completion_delimiter}
+#############################
+
+
+
+-Real Data-
+######################
+text: {input_text}
+######################
+output:

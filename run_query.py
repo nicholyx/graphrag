@@ -1,4 +1,7 @@
 
+# 命令行：
+# python -m graphrag.query --root ./ragdemo --method global "文档的主要内容是什么"
+# python -m graphrag.query --root ./ragdemo --method local "刘备是什么样的人？"
 
 if __name__ == '__main__':
     import time

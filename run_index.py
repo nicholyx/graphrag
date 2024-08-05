@@ -1,5 +1,5 @@
 
-
+# 命令行：python -m graphrag.index --verbose --root ./ragdemo
 if __name__ == '__main__':
     import time
     print('running index, time: ', time.strftime('%Y-%m-%d %H:%M:%S'))

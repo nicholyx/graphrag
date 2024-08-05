@@ -26,7 +26,7 @@ class DocSelectionType(Enum):
         return self.value
 
 
-if __name__ == "__main__":
+def run_prompt_tune() -> None:
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -146,3 +146,7 @@ if __name__ == "__main__":
             args.min_examples_required,
         )
     )
+
+
+if __name__ == "__main__":
+    run_prompt_tune()
