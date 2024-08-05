@@ -127,15 +127,15 @@ snapshots:
   top_level_nodes: false
 
 local_search:
-# text_unit_prop: 0.5
-# community_prop: 0.1
+ text_unit_prop: 0.5
+ community_prop: 0.25
+ max_tokens: 12000
 # conversation_history_max_turns: 5
 # top_k_mapped_entities: 10
 # top_k_relationships: 10
   # llm_temperature: 0 # temperature for sampling
   # llm_top_p: 1 # top-p sampling
   # llm_n: 1 # Number of completions to generate
-# max_tokens: 12000
 
 global_search:
   # llm_temperature: 0 # temperature for sampling
