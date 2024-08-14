@@ -90,8 +90,6 @@ def get_completion_llm_args(
 
 
 def try_parse_json_object(input: str) -> tuple[str, dict]:
-    """JSON cleaning and formatting utilities."""
-    # Sometimes, the LLM returns a json string with some extra description, this function will clean it up.
 
     result = None
     try:
@@ -103,28 +101,7 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     if result:
         return input, result
 
-    _pattern = r"\{(.*)\}"
-    _match = re.search(_pattern, input)
-    input = "{" + _match.group(1) + "}" if _match else input
-
-    # Clean up json string.
-    input = (
-        input.replace("{{", "{")
-        .replace("}}", "}")
-        .replace('"[{', "[{")
-        .replace('}]"', "}]")
-        .replace("\\", " ")
-        .replace("\\n", " ")
-        .replace("\n", " ")
-        .replace("\r", "")
-        .strip()
-    )
-
-    # Remove JSON Markdown Frame
-    if input.startswith("```json"):
-        input = input[len("```json") :]
-    if input.endswith("```"):
-        input = input[: len(input) - len("```")]
+    input = _clean_up_json(input)
 
     try:
         result = json.loads(input)
@@ -146,6 +123,35 @@ def try_parse_json_object(input: str) -> tuple[str, dict]:
     else:
         return input, result
 
+def _clean_up_json(input: str)->str:
+    """Clean up json string. @see graphrag.index.utils.json.clean_up_json """
+    """JSON cleaning and formatting utilities."""
+    """sometime, the llm return a json string with some extra description, this function will clean it up."""
+    # 目前下面的判断有问题，此处注释掉
+    # _pattern = r"\{(.*)\}"
+    # _match = re.search(_pattern, input)
+    # input = "{" + _match.group(1) + "}" if _match else input
+
+    # Clean up json string.
+    input = (
+        input.replace("{{", "{")
+        .replace("}}", "}")
+        .replace('"[{', "[{")
+        .replace('}]"', "}]")
+        .replace("\\", " ")
+        .replace("\\n", " ")
+        .replace("\n", " ")
+        .replace("\r", "")
+        .strip()
+    )
+
+    # Remove JSON Markdown Frame
+    if input.startswith("```json"):
+        input = input[len("```json") :]
+    if input.endswith("```"):
+        input = input[: len(input) - len("```")]
+
+    return input
 
 def get_sleep_time_from_error(e: Any) -> float:
     """Extract the sleep time value from a RateLimitError. This is usually only available in Azure."""

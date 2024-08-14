@@ -34,7 +34,7 @@ def create_hash_key(
         str: The cache key.
     """
     llm_string = _llm_string(parameters)
-    history_string = _hash(json.dumps(history)) if history else None
+    history_string = _hash(json.dumps(history, ensure_ascii=False)) if history else None
     hash_string = (
         _hash(prompt + llm_string + history_string)
         if history_string

@@ -234,7 +234,12 @@ class GlobalSearch(BaseSearch):
         if _j == {}:
             return [{"answer": "", "score": 0}]
 
-        parsed_elements = json.loads(search_response).get("points")
+        try:
+            parsed_elements = json.loads(search_response).get("points")
+        except Exception as e:
+            log.exception("Error parsing search response json, json=%s", search_response)
+            raise e
+
         if not parsed_elements or not isinstance(parsed_elements, list):
             return [{"answer": "", "score": 0}]
 
@@ -335,7 +340,7 @@ class GlobalSearch(BaseSearch):
 
             search_response = await self.llm.agenerate(
                 search_messages,
-                streaming=True,
+                streaming=False,
                 callbacks=self.callbacks,  # type: ignore
                 **llm_kwargs,  # type: ignore
             )

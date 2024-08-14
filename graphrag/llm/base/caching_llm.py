@@ -62,7 +62,7 @@ class CachingLLM(LLM[TIn, TOut], Generic[TIn, TOut]):
     def _cache_key(
         self, input: TIn, name: str | None, args: dict, history: list[dict] | None
     ) -> str:
-        json_input = json.dumps(input)
+        json_input = json.dumps(input, ensure_ascii=False)
         tag = (
             f"{name}-{self._operation}-v{_cache_strategy_version}"
             if name is not None

@@ -61,6 +61,24 @@ def run_global_search(
     )
 
 
+def _configure_vector_store_uri(config: GraphRagConfig, data_path: Path):
+    """
+    配置向量存储 URI 。
+    如果未配置向量存储uri，则在数据目录中创建lancedb数据库。
+    """
+
+    vector_store_args = config.embeddings.vector_store if config.embeddings.vector_store else {}
+    config.embeddings.vector_store = vector_store_args
+
+    if vector_store_args.get("db_uri", None) is None:
+        lancedb_store_path = data_path.parent
+        vector_store_args.update(
+            {
+                "db_uri": f"{lancedb_store_path}/lancedb",
+            }
+        )
+
+
 def run_local_search(
     config_dir: str | None,
     data_dir: str | None,
@@ -77,6 +95,10 @@ def run_local_search(
         data_dir, root_dir, config_dir
     )
     data_path = Path(data_dir)
+
+    # configure vector store URI
+    _configure_vector_store_uri(config, data_path)
+
 
     final_nodes = pd.read_parquet(data_path / "create_final_nodes.parquet")
     final_community_reports = pd.read_parquet(
@@ -122,6 +144,10 @@ def _configure_paths_and_settings(
     if data_dir is None:
         data_dir = _infer_data_dir(cast(str, root_dir))
     config = _create_graphrag_config(root_dir, config_dir)
+
+    reporter.info(f"ROOT_DIR : {root_dir}")
+    reporter.info(f"DATA_DIR : {data_dir}")
+
     return data_dir, root_dir, config
 
 

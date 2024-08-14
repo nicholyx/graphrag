@@ -73,10 +73,21 @@ def __get_embedding_description_store(
         )
 
         # load data from an existing table
-        description_embedding_store.document_collection = (
-            description_embedding_store.db_connection.open_table(
+        try:
+            table = description_embedding_store.db_connection.open_table(
                 description_embedding_store.collection_name
             )
+        except Exception as e:
+            # reporter.error(f"Failed to load description embeddings from lancedb, {e}")
+            store_entity_semantic_embeddings(
+                entities=entities, vectorstore=description_embedding_store
+            )
+            table = description_embedding_store.db_connection.open_table(
+                description_embedding_store.collection_name
+            )
+
+        description_embedding_store.document_collection = (
+            table
         )
 
     return description_embedding_store

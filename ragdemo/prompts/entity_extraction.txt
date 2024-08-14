@@ -1,0 +1,97 @@
+
+-Goal-
+Given a text document that is potentially relevant to this activity, first identify all entities needed from the text in order to capture the information and ideas in the text.
+Next, report all relationships among the identified entities.
+
+-Steps-
+1. Identify all entities. For each identified entity, extract the following information:
+- entity_name: Name of the entity, capitalized
+- entity_type: Suggest several labels or categories for the entity. The categories should not be specific, but should be as general as possible.
+- entity_description: Comprehensive description of the entity's attributes and activities
+Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
+
+2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
+For each pair of related entities, extract the following information:
+- source_entity: name of the source entity, as identified in step 1
+- target_entity: name of the target entity, as identified in step 1
+- relationship_description: explanation as to why you think the source entity and the target entity are related to each other
+- relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
+Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+
+3. Return output in
+The primary language of the provided text is Chinese. as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
+
+4. If you have to translate into
+The primary language of the provided text is Chinese., just translate the descriptions, nothing else!
+
+5. When finished, output {completion_delimiter}.
+
+-Examples-
+######################
+
+Example 1:
+
+text:
+德。因家里贫寒，靠贩麻鞋、织草席为生。这天他进城来看榜文。
+　　刘备看完了榜文，不觉感慨地长叹了一声。忽听身后有个人大声喝道∶“大丈夫不给国家出力，叹什么气？”
+　　刘备回头一看，这人身高八尺，豹子头，圆眼睛，满腮的胡须像钢丝一样竖着，声音像洪钟，样子十分威武。那人对刘备说他姓张名飞，字翼德，
+------------------------
+output:
+
+("entity"{tuple_delimiter}刘备{tuple_delimiter}PERSON{tuple_delimiter}刘备看到榜文后感慨，是一位有抱负的人)
+{record_delimiter}
+("entity"{tuple_delimiter}榜文{tuple_delimiter}ITEM{tuple_delimiter}榜文是当时用来公告重要事宜的一种方式，刘备看完了榜文)
+{record_delimiter}
+("entity"{tuple_delimiter}张飞{tuple_delimiter}PERSON{tuple_delimiter}张飞是一个身高八尺，有豹子头、圆眼睛和满腮胡须的人，他批评刘备叹气)
+{record_delimiter}
+("entity"{tuple_delimiter}贩麻鞋{tuple_delimiter}ACTIVITY{tuple_delimiter}贩麻鞋是指卖麻鞋这一行为，张飞可能从事这一职业)
+{record_delimiter}
+("entity"{tuple_delimiter}织草席{tuple_delimiter}ACTIVITY{tuple_delimiter}织草席是指编织草席这一行为，张飞可能从事这一职业)
+{record_delimiter}
+("entity"{tuple_delimiter}德{tuple_delimiter}PERSON{tuple_delimiter}德是张飞的字，指代张飞本人)
+{record_delimiter}
+("relationship"{tuple_delimiter}刘备{tuple_delimiter}榜文{tuple_delimiter}刘备看到榜文后感慨，表明榜文对他有触动{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}张飞{tuple_delimiter}刘备{tuple_delimiter}张飞批评刘备叹气，说明张飞对刘备有影响或认识{tuple_delimiter}4)
+{record_delimiter}
+("relationship"{tuple_delimiter}张飞{tuple_delimiter}贩麻鞋{tuple_delimiter}张飞从事贩麻鞋这一活动，说明他以此为生{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}张飞{tuple_delimiter}织草席{tuple_delimiter}张飞从事织草席这一活动，说明他以此为生{tuple_delimiter}7)
+{completion_delimiter}
+#############################
+
+
+Example 2:
+
+text:
+做着卖酒、屠宰猪羊的生意。他愿意拿出家产作本钱，与刘备共同干一番大事业。
+　　刘备、张飞两人谈得投机，便一起到村口的一家酒店饮酒叙话。
+　　这时，一推车大汉进店饮酒。刘备留神一看，这人有九尺高，胸前长须飘飘，脸色好像红枣一样，长一双丹凤眼，两条卧蚕眉，相貌非常威武雄伟。刘备连忙起身
+------------------------
+output:
+
+("entity"{tuple_delimiter}刘备{tuple_delimiter}PERSON{tuple_delimiter}刘备是一位有着雄伟相貌和远大抱负的人物，愿意与张飞共同干一番大事业)
+{record_delimiter}
+("entity"{tuple_delimiter}张飞{tuple_delimiter}PERSON{tuple_delimiter}张飞与刘备有着投机的话题，两人一起到酒店饮酒叙话)
+{record_delimiter}
+("entity"{tuple_delimiter}酒店{tuple_delimiter}BUILDING{tuple_delimiter}村口的一家酒店是刘备和张飞饮酒叙话的地点)
+{record_delimiter}
+("entity"{tuple_delimiter}大汉{tuple_delimiter}PERSON{tuple_delimiter}一位九尺高、胸前长须飘飘、脸色像红枣一样、有丹凤眼和卧蚕眉的大汉，进店饮酒引起了刘备的注意)
+{record_delimiter}
+("relationship"{tuple_delimiter}刘备{tuple_delimiter}张飞{tuple_delimiter}刘备和张飞谈得投机，一起到酒店饮酒叙话{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}刘备{tuple_delimiter}酒店{tuple_delimiter}刘备在酒店饮酒叙话{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}张飞{tuple_delimiter}酒店{tuple_delimiter}张飞在酒店饮酒叙话{tuple_delimiter}5)
+{record_delimiter}
+("relationship"{tuple_delimiter}大汉{tuple_delimiter}刘备{tuple_delimiter}大汉进店饮酒引起了刘备的注意{tuple_delimiter}5)
+{completion_delimiter}
+#############################
+
+
+
+-Real Data-
+######################
+text: {input_text}
+######################
+output:

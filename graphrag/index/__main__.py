@@ -7,7 +7,7 @@ import argparse
 
 from .cli import index_cli
 
-if __name__ == "__main__":
+def run_index():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--config",
@@ -87,3 +87,6 @@ if __name__ == "__main__":
         overlay_defaults=args.overlay_defaults or False,
         cli=True,
     )
+
+if __name__ == "__main__":
+    run_index()

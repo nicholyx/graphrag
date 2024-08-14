@@ -11,7 +11,8 @@ from .cli import prompt_tune
 from .generator import MAX_TOKEN_COUNT
 from .loader import MIN_CHUNK_SIZE
 
-if __name__ == "__main__":
+
+def run_prompt_tune():
     parser = argparse.ArgumentParser(
         prog="python -m graphrag.prompt_tune",
         description="The graphrag auto templating module.",
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config",
         help="Configuration yaml file to use when generating prompts",
-        required=True,
+        required=False,
         type=str,
     )
 
@@ -142,3 +143,6 @@ if __name__ == "__main__":
             min_examples_required=args.min_examples_required,
         )
     )
+
+if __name__ == "__main__":
+    run_prompt_tune()
