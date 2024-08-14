@@ -81,7 +81,7 @@ class LocalSearch(BaseSearch):
 
             response = await self.llm.agenerate(
                 messages=search_messages,
-                streaming=True,
+                streaming=False,
                 callbacks=self.callbacks,
                 **self.llm_params,
             )

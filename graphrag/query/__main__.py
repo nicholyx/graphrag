@@ -22,7 +22,7 @@ class SearchType(Enum):
         return self.value
 
 
-if __name__ == "__main__":
+def run_query():
     parser = argparse.ArgumentParser(
         prog="python -m graphrag.query",
         description="The graphrag query engine",
@@ -102,3 +102,6 @@ if __name__ == "__main__":
             )
         case _:
             raise ValueError(INVALID_METHOD_ERROR)
+
+if __name__ == "__main__":
+    run_query()

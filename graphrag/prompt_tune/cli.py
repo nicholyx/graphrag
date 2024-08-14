@@ -70,7 +70,7 @@ async def prompt_tune(
         k=k,
     )
 
-    output_path = Path(output)
+    output_path = Path(root) / output
     if output_path:
         reporter.info(f"Writing prompts to {output_path}")
         output_path.mkdir(parents=True, exist_ok=True)
